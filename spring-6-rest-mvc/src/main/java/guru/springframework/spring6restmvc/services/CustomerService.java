@@ -11,4 +11,6 @@ public interface CustomerService {
 
     List<Customer> getAllCostumers();
 
+    Customer saveNewCustomer(Customer customer);
+
 }
