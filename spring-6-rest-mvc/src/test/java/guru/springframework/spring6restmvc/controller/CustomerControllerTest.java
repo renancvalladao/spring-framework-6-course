@@ -14,6 +14,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,10 +38,30 @@ class CustomerControllerTest {
     CustomerServiceImpl customerServiceImpl;
     @Captor
     ArgumentCaptor<UUID> uuidArgumentCaptor;
+    @Captor
+    ArgumentCaptor<Customer> customerArgumentCaptor;
 
     @BeforeEach
     void setUp() {
         this.customerServiceImpl = new CustomerServiceImpl();
+    }
+
+    @Test
+    void testPatchCustomer() throws Exception {
+        Customer customer = this.customerServiceImpl.getAllCostumers().get(0);
+
+        Map<String, Object> customerMap = new HashMap<>();
+        customerMap.put("name", "New Name");
+
+        this.mockMvc.perform(patch("/api/v1/customer/" + customer.getId())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(customerMap)))
+                .andExpect(status().isNoContent());
+
+        verify(this.customerService).patchCustomerById(this.uuidArgumentCaptor.capture(), this.customerArgumentCaptor.capture());
+        assertThat(this.uuidArgumentCaptor.getValue()).isEqualTo(customer.getId());
+        assertThat(this.customerArgumentCaptor.getValue().getName()).isEqualTo(customerMap.get("name"));
     }
 
     @Test
