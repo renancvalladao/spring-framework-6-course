@@ -12,11 +12,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.UUID;
+
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CustomerController.class)
@@ -33,6 +35,19 @@ class CustomerControllerTest {
     @BeforeEach
     void setUp() {
         this.customerServiceImpl = new CustomerServiceImpl();
+    }
+
+    @Test
+    void testUpdateCustomer() throws Exception {
+        Customer customer = this.customerServiceImpl.getAllCostumers().get(0);
+
+        this.mockMvc.perform(put("/api/v1/customer/" + customer.getId())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(customer)))
+                .andExpect(status().isNoContent());
+
+        verify(this.customerService).updateCustomerById(any(UUID.class), any(Customer.class));
     }
 
     @Test
