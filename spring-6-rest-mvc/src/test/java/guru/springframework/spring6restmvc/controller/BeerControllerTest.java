@@ -7,12 +7,15 @@ import guru.springframework.spring6restmvc.services.BeerServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,10 +36,32 @@ class BeerControllerTest {
     @MockBean
     BeerService beerService;
     BeerServiceImpl beerServiceImpl;
+    @Captor
+    ArgumentCaptor<UUID> uuidArgumentCaptor;
+    @Captor
+    ArgumentCaptor<Beer> beerArgumentCaptor;
 
     @BeforeEach
     void setUp() {
         this.beerServiceImpl = new BeerServiceImpl();
+    }
+
+    @Test
+    void testPatchBeer() throws Exception {
+        Beer beer = this.beerServiceImpl.listBeers().get(0);
+
+        Map<String, Object> beerMap = new HashMap<>();
+        beerMap.put("beerName", "New Name");
+
+        this.mockMvc.perform(patch("/api/v1/beer/" + beer.getId())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(beerMap)))
+                .andExpect(status().isNoContent());
+
+        verify(this.beerService).patchBeerById(this.uuidArgumentCaptor.capture(), this.beerArgumentCaptor.capture());
+        assertThat(beer.getId()).isEqualTo(this.uuidArgumentCaptor.getValue());
+        assertThat(beerMap.get("beerName")).isEqualTo(this.beerArgumentCaptor.getValue().getBeerName());
     }
 
     @Test
@@ -47,10 +72,8 @@ class BeerControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
-        ArgumentCaptor<UUID> uuidArgumentCaptor = ArgumentCaptor.forClass(UUID.class);
-
-        verify(this.beerService).deleteById(uuidArgumentCaptor.capture());
-        assertThat(beer.getId()).isEqualTo(uuidArgumentCaptor.getValue());
+        verify(this.beerService).deleteById(this.uuidArgumentCaptor.capture());
+        assertThat(beer.getId()).isEqualTo(this.uuidArgumentCaptor.getValue());
     }
 
     @Test
