@@ -53,7 +53,7 @@ class BeerControllerTest {
         Map<String, Object> beerMap = new HashMap<>();
         beerMap.put("beerName", "New Name");
 
-        this.mockMvc.perform(patch("/api/v1/beer/" + beer.getId())
+        this.mockMvc.perform(patch(BeerController.BEER_PATH + "/" + beer.getId())
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.objectMapper.writeValueAsString(beerMap)))
@@ -68,7 +68,7 @@ class BeerControllerTest {
     void testDeleteBeer() throws Exception {
         Beer beer = this.beerServiceImpl.listBeers().get(0);
 
-        this.mockMvc.perform(delete("/api/v1/beer/" + beer.getId())
+        this.mockMvc.perform(delete(BeerController.BEER_PATH + "/" + beer.getId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
@@ -80,7 +80,7 @@ class BeerControllerTest {
     void testUpdateBeer() throws Exception {
         Beer beer = this.beerServiceImpl.listBeers().get(0);
 
-        this.mockMvc.perform(put("/api/v1/beer/" + beer.getId())
+        this.mockMvc.perform(put(BeerController.BEER_PATH + "/" + beer.getId())
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.objectMapper.writeValueAsString(beer)))
@@ -97,7 +97,7 @@ class BeerControllerTest {
 
         given(this.beerService.saveNewBeer(any(Beer.class))).willReturn(this.beerServiceImpl.listBeers().get(1));
 
-        this.mockMvc.perform(post("/api/v1/beer")
+        this.mockMvc.perform(post(BeerController.BEER_PATH)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.objectMapper.writeValueAsString(beer)))
@@ -109,7 +109,7 @@ class BeerControllerTest {
     void testListBeers() throws Exception {
         given(this.beerService.listBeers()).willReturn(this.beerServiceImpl.listBeers());
 
-        this.mockMvc.perform(get("/api/v1/beer").accept(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(get(BeerController.BEER_PATH).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.length()", is(3)));
@@ -121,7 +121,7 @@ class BeerControllerTest {
 
         given(this.beerService.getBeerById(testBeer.getId())).willReturn(testBeer);
 
-        this.mockMvc.perform(get("/api/v1/beer/" + testBeer.getId()).accept(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(get(BeerController.BEER_PATH + "/" + testBeer.getId()).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(testBeer.getId().toString())))
