@@ -53,7 +53,7 @@ class BeerControllerTest {
         Map<String, Object> beerMap = new HashMap<>();
         beerMap.put("beerName", "New Name");
 
-        this.mockMvc.perform(patch(BeerController.BEER_PATH + "/" + beer.getId())
+        this.mockMvc.perform(patch(BeerController.BEER_PATH_ID, beer.getId())
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.objectMapper.writeValueAsString(beerMap)))
@@ -68,7 +68,7 @@ class BeerControllerTest {
     void testDeleteBeer() throws Exception {
         Beer beer = this.beerServiceImpl.listBeers().get(0);
 
-        this.mockMvc.perform(delete(BeerController.BEER_PATH + "/" + beer.getId())
+        this.mockMvc.perform(delete(BeerController.BEER_PATH_ID, beer.getId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
@@ -80,7 +80,7 @@ class BeerControllerTest {
     void testUpdateBeer() throws Exception {
         Beer beer = this.beerServiceImpl.listBeers().get(0);
 
-        this.mockMvc.perform(put(BeerController.BEER_PATH + "/" + beer.getId())
+        this.mockMvc.perform(put(BeerController.BEER_PATH_ID, beer.getId())
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.objectMapper.writeValueAsString(beer)))
@@ -121,7 +121,7 @@ class BeerControllerTest {
 
         given(this.beerService.getBeerById(testBeer.getId())).willReturn(testBeer);
 
-        this.mockMvc.perform(get(BeerController.BEER_PATH + "/" + testBeer.getId()).accept(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(get(BeerController.BEER_PATH_ID, testBeer.getId()).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(testBeer.getId().toString())))

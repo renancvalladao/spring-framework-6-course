@@ -53,7 +53,7 @@ class CustomerControllerTest {
         Map<String, Object> customerMap = new HashMap<>();
         customerMap.put("name", "New Name");
 
-        this.mockMvc.perform(patch(CustomerController.CUSTOMER_PATH + "/" + customer.getId())
+        this.mockMvc.perform(patch(CustomerController.CUSTOMER_PATH_ID, customer.getId())
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.objectMapper.writeValueAsString(customerMap)))
@@ -68,7 +68,7 @@ class CustomerControllerTest {
     void testDeleteCustomer() throws Exception {
         Customer customer = this.customerServiceImpl.getAllCostumers().get(0);
 
-        this.mockMvc.perform(delete(CustomerController.CUSTOMER_PATH + "/" + customer.getId())
+        this.mockMvc.perform(delete(CustomerController.CUSTOMER_PATH_ID, customer.getId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
@@ -80,7 +80,7 @@ class CustomerControllerTest {
     void testUpdateCustomer() throws Exception {
         Customer customer = this.customerServiceImpl.getAllCostumers().get(0);
 
-        this.mockMvc.perform(put(CustomerController.CUSTOMER_PATH + "/" + customer.getId())
+        this.mockMvc.perform(put(CustomerController.CUSTOMER_PATH_ID, customer.getId())
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.objectMapper.writeValueAsString(customer)))
@@ -123,7 +123,7 @@ class CustomerControllerTest {
 
         given(this.customerService.getCustomerById(testCustomer.getId())).willReturn(testCustomer);
 
-        this.mockMvc.perform(get(CustomerController.CUSTOMER_PATH + "/" + testCustomer.getId()).accept(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(get(CustomerController.CUSTOMER_PATH_ID, testCustomer.getId()).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.name", is(testCustomer.getName())));
