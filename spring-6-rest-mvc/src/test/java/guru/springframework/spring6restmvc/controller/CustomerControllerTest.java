@@ -1,7 +1,7 @@
 package guru.springframework.spring6restmvc.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import guru.springframework.spring6restmvc.model.Customer;
+import guru.springframework.spring6restmvc.model.CustomerDTO;
 import guru.springframework.spring6restmvc.services.CustomerService;
 import guru.springframework.spring6restmvc.services.CustomerServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,7 +40,7 @@ class CustomerControllerTest {
     @Captor
     ArgumentCaptor<UUID> uuidArgumentCaptor;
     @Captor
-    ArgumentCaptor<Customer> customerArgumentCaptor;
+    ArgumentCaptor<CustomerDTO> customerArgumentCaptor;
 
     @BeforeEach
     void setUp() {
@@ -49,7 +49,7 @@ class CustomerControllerTest {
 
     @Test
     void testPatchCustomer() throws Exception {
-        Customer customer = this.customerServiceImpl.getAllCostumers().get(0);
+        CustomerDTO customer = this.customerServiceImpl.getAllCostumers().get(0);
 
         Map<String, Object> customerMap = new HashMap<>();
         customerMap.put("name", "New Name");
@@ -67,7 +67,7 @@ class CustomerControllerTest {
 
     @Test
     void testDeleteCustomer() throws Exception {
-        Customer customer = this.customerServiceImpl.getAllCostumers().get(0);
+        CustomerDTO customer = this.customerServiceImpl.getAllCostumers().get(0);
 
         this.mockMvc.perform(delete(CustomerController.CUSTOMER_PATH_ID, customer.getId())
                         .accept(MediaType.APPLICATION_JSON))
@@ -79,7 +79,7 @@ class CustomerControllerTest {
 
     @Test
     void testUpdateCustomer() throws Exception {
-        Customer customer = this.customerServiceImpl.getAllCostumers().get(0);
+        CustomerDTO customer = this.customerServiceImpl.getAllCostumers().get(0);
 
         this.mockMvc.perform(put(CustomerController.CUSTOMER_PATH_ID, customer.getId())
                         .accept(MediaType.APPLICATION_JSON)
@@ -87,17 +87,17 @@ class CustomerControllerTest {
                         .content(this.objectMapper.writeValueAsString(customer)))
                 .andExpect(status().isNoContent());
 
-        verify(this.customerService).updateCustomerById(this.uuidArgumentCaptor.capture(), any(Customer.class));
+        verify(this.customerService).updateCustomerById(this.uuidArgumentCaptor.capture(), any(CustomerDTO.class));
         assertThat(customer.getId()).isEqualTo(this.uuidArgumentCaptor.getValue());
     }
 
     @Test
     void testCreateNewCustomer() throws Exception {
-        Customer customer = this.customerServiceImpl.getAllCostumers().get(0);
+        CustomerDTO customer = this.customerServiceImpl.getAllCostumers().get(0);
         customer.setId(null);
         customer.setVersion(null);
 
-        given(this.customerService.saveNewCustomer(any(Customer.class)))
+        given(this.customerService.saveNewCustomer(any(CustomerDTO.class)))
                 .willReturn(this.customerServiceImpl.getAllCostumers().get(1));
 
         this.mockMvc.perform(post(CustomerController.CUSTOMER_PATH)
@@ -128,7 +128,7 @@ class CustomerControllerTest {
 
     @Test
     void getCustomerById() throws Exception {
-        Customer testCustomer = this.customerServiceImpl.getAllCostumers().get(0);
+        CustomerDTO testCustomer = this.customerServiceImpl.getAllCostumers().get(0);
 
         given(this.customerService.getCustomerById(testCustomer.getId())).willReturn(Optional.of(testCustomer));
 
