@@ -28,6 +28,18 @@ class BeerControllerIntegrationTest {
     @Autowired
     BeerMapper beerMapper;
 
+    @Rollback
+    @Transactional
+    @Test
+    void deleteByIdFound() {
+        Beer beer = this.beerRepository.findAll().get(0);
+
+        ResponseEntity<BeerDTO> responseEntity = this.beerController.deleteById(beer.getId());
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(204));
+        assertThat(this.beerRepository.findById(beer.getId())).isEmpty();
+    }
+
     @Test
     void testUpdateNotFound() {
         assertThrows(NotFoundException.class, () -> this.beerController.updateById(UUID.randomUUID(), BeerDTO.builder().build()));
