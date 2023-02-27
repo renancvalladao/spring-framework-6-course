@@ -6,6 +6,8 @@ import guru.springframework.spring6restmvc.repositories.BeerRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,26 @@ class BeerControllerIntegrationTest {
     BeerController beerController;
     @Autowired
     BeerRepository beerRepository;
+
+    @Rollback
+    @Transactional
+    @Test
+    void saveNewBeerTest() {
+        BeerDTO beerDTO = BeerDTO.builder()
+                .beerName("New Beer")
+                .build();
+
+        ResponseEntity<BeerDTO> responseEntity = this.beerController.handlePost(beerDTO);
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(201));
+        assertThat(responseEntity.getHeaders().getLocation()).isNotNull();
+
+        String[] location = responseEntity.getHeaders().getLocation().getPath().split("/");
+        UUID savedUUID = UUID.fromString(location[4]);
+
+        Beer beer = this.beerRepository.findById(savedUUID).get();
+        assertThat(beer).isNotNull();
+    }
 
     @Test
     void testBeerIdNotFound() {
