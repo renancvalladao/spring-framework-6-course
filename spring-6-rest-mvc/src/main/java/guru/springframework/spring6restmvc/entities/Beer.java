@@ -4,6 +4,7 @@ import guru.springframework.spring6restmvc.model.BeerStyle;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -26,14 +27,17 @@ public class Beer {
     private UUID id;
     @Version
     private Integer version;
-    @NotBlank
-    @NotNull
-    private String beerName;
     @NotNull
     private BeerStyle beerStyle;
     @NotBlank
     @NotNull
+    @Size(max = 255)
     private String upc;
+    @NotBlank
+    @NotNull
+    @Size(max = 50)
+    @Column(length = 50)
+    private String beerName;
     private Integer quantityOnHand;
     @NotNull
     private BigDecimal price;
