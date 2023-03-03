@@ -172,7 +172,7 @@ class BeerControllerIntegrationTest {
 
     @Test
     void testListBeers() {
-        List<BeerDTO> dtos = this.beerController.listBeers();
+        List<BeerDTO> dtos = this.beerController.listBeers(null);
 
         assertThat(dtos.size()).isEqualTo(2413);
     }
@@ -182,7 +182,7 @@ class BeerControllerIntegrationTest {
     @Test
     void testEmptyList() {
         this.beerRepository.deleteAll();
-        List<BeerDTO> dtos = this.beerController.listBeers();
+        List<BeerDTO> dtos = this.beerController.listBeers(null);
 
         assertThat(dtos.size()).isEqualTo(0);
     }
