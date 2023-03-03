@@ -165,7 +165,7 @@ class BeerControllerIntegrationTest {
     void testListBeers() {
         List<BeerDTO> dtos = this.beerController.listBeers();
 
-        assertThat(dtos.size()).isEqualTo(3);
+        assertThat(dtos.size()).isEqualTo(2413);
     }
 
     @Rollback
