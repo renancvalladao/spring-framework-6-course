@@ -34,6 +34,10 @@ public class BeerOrderLine {
     private Timestamp lastModifiedDate;
     private Integer orderQuantity = 0;
     private Integer quantityAllocated = 0;
+    @ManyToOne
+    private BeerOrder beerOrder;
+    @ManyToOne
+    private Beer beer;
 
     public boolean isNew() {
         return this.id == null;
